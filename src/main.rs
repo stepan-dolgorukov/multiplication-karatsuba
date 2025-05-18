@@ -9,9 +9,8 @@ struct Split {
   high: BigUint
 }
 
-fn calculate_split(value: &BigUint) -> Split {
-  let length: u32 = calculate_length(value);
-  let divisor: BigUint = BigUint::from(10u8).pow(length / 2);
+fn calculate_split(value: &BigUint, length: u32) -> Split {
+  let divisor: BigUint = BigUint::from(10u8).pow(length);
   Split { low: value % &divisor, high: value / &divisor }
 }
 
