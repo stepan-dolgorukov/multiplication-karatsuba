@@ -1,6 +1,9 @@
 use num_bigint::BigUint;
 use std::cmp::max;
+use std::error::Error;
 use num_traits::Zero;
+use std::io::Read;
+use std::str::FromStr;
 
 fn calculate_length(value: &BigUint) -> u32 {
   value.to_str_radix(10).len() as u32
@@ -52,7 +55,25 @@ fn calculate_product(left: &BigUint, right: &BigUint) -> BigUint {
   &a * p.pow(2) + calculate_product(&((&c - &a) - &b), &p) + &b
 }
 
-fn main() {
-  let product = calculate_product(&BigUint::from(2508921123usize), &BigUint::from(142312321usize));
-  println!("{}", product);
+fn main() -> Result<(), Box<dyn Error>> {
+  let mut input = String::new();
+
+  match std::io::stdin().read_to_string(&mut input) {
+    Ok(_) => {}
+
+    Err(_) => {
+      return Err("fail to read from \"stdin\"".into());
+    }
+  };
+
+  let mut operands = input.split_whitespace().map(
+    |input| BigUint::from_str(input).expect("fail to read number")
+  );
+
+  let operand_left: BigUint = operands.next().expect("fail to get a left operand");
+  let operand_right: BigUint = operands.next().expect("fail to get a right operand");
+  let product: BigUint = calculate_product(&operand_left, &operand_right);
+
+  println!("{} * {} = {}", operand_left, operand_right, product);
+  Ok(())
 }
