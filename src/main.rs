@@ -67,7 +67,7 @@ fn main() -> Result<(), Box<dyn Error>> {
   };
 
   let mut operands = input.split_whitespace().map(
-    |input| BigUint::from_str(input).expect("fail to read number")
+    |input: &str | BigUint::from_str(input).expect("fail to read number")
   );
 
   let operand_left: BigUint = operands.next().expect("fail to get a left operand");
