@@ -4,6 +4,7 @@ use std::error::Error;
 use num_traits::Zero;
 use std::io::Read;
 use std::str::FromStr;
+use std::time::{Duration, Instant};
 
 fn calculate_length(value: &BigUint) -> u32 {
   value.to_str_radix(10).len() as u32
@@ -72,8 +73,11 @@ fn main() -> Result<(), Box<dyn Error>> {
 
   let operand_left: BigUint = operands.next().expect("fail to get a left operand");
   let operand_right: BigUint = operands.next().expect("fail to get a right operand");
+  let instant: Instant = Instant::now();
   let product: BigUint = calculate_product(&operand_left, &operand_right);
+  let duration_calculation: Duration = instant.elapsed();
 
   println!("{} * {} = {}", operand_left, operand_right, product);
+  println!("{} ns", duration_calculation.as_nanos());
   Ok(())
 }
