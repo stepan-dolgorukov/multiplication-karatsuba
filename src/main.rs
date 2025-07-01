@@ -2,7 +2,6 @@ use anyhow::{Context, Result, bail};
 use num_bigint::BigUint;
 use num_traits::Zero;
 use std::cmp::max;
-use std::io::Read;
 use std::str::FromStr;
 use std::time::{Duration, Instant};
 
