@@ -5,6 +5,7 @@ use std::error::Error;
 use std::io::Read;
 use std::str::FromStr;
 use std::time::{Duration, Instant};
+use anyhow::Result;
 
 fn calculate_length(value: &BigUint) -> u32 {
   value.to_str_radix(10).len() as u32
