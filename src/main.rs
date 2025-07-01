@@ -1,7 +1,7 @@
 use num_bigint::BigUint;
+use num_traits::Zero;
 use std::cmp::max;
 use std::error::Error;
-use num_traits::Zero;
 use std::io::Read;
 use std::str::FromStr;
 use std::time::{Duration, Instant};
@@ -12,12 +12,15 @@ fn calculate_length(value: &BigUint) -> u32 {
 
 struct Split {
   low: BigUint,
-  high: BigUint
+  high: BigUint,
 }
 
 fn calculate_split(value: &BigUint, length: u32) -> Split {
   let divisor: BigUint = BigUint::from(10u8).pow(length);
-  Split { low: value % &divisor, high: value / &divisor }
+  Split {
+    low: value % &divisor,
+    high: value / &divisor,
+  }
 }
 
 fn calculate_product(left: &BigUint, right: &BigUint) -> BigUint {
@@ -30,7 +33,7 @@ fn calculate_product(left: &BigUint, right: &BigUint) -> BigUint {
   let length_left: u32 = calculate_length(&left);
   let length_right: u32 = calculate_length(&right);
 
-  if (length_left <= 2) && (length_right <= 2) {
+  if (length_left <= 4) && (length_right <= 4) {
     // здесь должно вызываться вычисление произведения столбиком
     return left * right;
   }
@@ -47,8 +50,10 @@ fn calculate_product(left: &BigUint, right: &BigUint) -> BigUint {
   let b: BigUint = calculate_product(&split_left.low, &split_right.low);
 
   // c = (u_1 + u_0) * (v_1 + v_0)
-  let c: BigUint = calculate_product(&(&split_left.high + &split_left.low),
-                                     &(&split_right.high + &split_right.low));
+  let c: BigUint = calculate_product(
+    &(&split_left.high + &split_left.low),
+    &(&split_right.high + &split_right.low),
+  );
 
   // println!("a={}, b={}, c={}", a, b, c);
 
@@ -67,9 +72,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     }
   };
 
-  let mut operands = input.split_whitespace().map(
-    |input: &str | BigUint::from_str(input).expect("fail to read number")
-  );
+  let mut operands = input
+    .split_whitespace()
+    .map(|input: &str| BigUint::from_str(input).expect("fail to read number"));
 
   let operand_left: BigUint = operands.next().expect("fail to get a left operand");
   let operand_right: BigUint = operands.next().expect("fail to get a right operand");
