@@ -69,7 +69,8 @@ fn read_biguint_from_stdin() -> Result<BigUint> {
         bail!("a size of the input equals to 0");
       }
 
-      BigUint::from_str(&mut input.trim()).context("fail to represent input as value of the type biguint")
+      BigUint::from_str(&mut input.trim())
+        .context("fail to represent input as value of the type biguint")
     }
 
     Err(_) => {
