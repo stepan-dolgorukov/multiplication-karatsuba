@@ -1,11 +1,10 @@
+use anyhow::{Context, Result, bail};
 use num_bigint::BigUint;
 use num_traits::Zero;
 use std::cmp::max;
-use std::error::Error;
 use std::io::Read;
 use std::str::FromStr;
 use std::time::{Duration, Instant};
-use anyhow::Result;
 
 fn calculate_length(value: &BigUint) -> u32 {
   value.to_str_radix(10).len() as u32
@@ -62,23 +61,27 @@ fn calculate_product(left: &BigUint, right: &BigUint) -> BigUint {
   &a * p.pow(2) + calculate_product(&((&c - &a) - &b), &p) + &b
 }
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn read_biguint_from_stdin() -> Result<BigUint> {
   let mut input = String::new();
 
-  match std::io::stdin().read_to_string(&mut input) {
-    Ok(_) => {}
+  match std::io::stdin().read_line(&mut input) {
+    Ok(size_input) => {
+      if size_input == 0 {
+        bail!("a size of the input equals to 0");
+      }
+
+      BigUint::from_str(&mut input.trim()).context("fail to represent input as value of the type biguint")
+    }
 
     Err(_) => {
-      return Err("fail to read from \"stdin\"".into());
+      bail!("fail to get input from \"stdin\"");
     }
-  };
+  }
+}
 
-  let mut operands = input
-    .split_whitespace()
-    .map(|input: &str| BigUint::from_str(input).expect("fail to read number"));
-
-  let operand_left: BigUint = operands.next().expect("fail to get a left operand");
-  let operand_right: BigUint = operands.next().expect("fail to get a right operand");
+fn main() -> Result<()> {
+  let operand_left: BigUint = read_biguint_from_stdin()?;
+  let operand_right: BigUint = read_biguint_from_stdin()?;
   let instant: Instant = Instant::now();
   let product: BigUint = calculate_product(&operand_left, &operand_right);
   let duration_calculation: Duration = instant.elapsed();
