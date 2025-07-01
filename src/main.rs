@@ -65,7 +65,7 @@ fn read_biguint_from_stdin() -> Result<BigUint> {
 
   match std::io::stdin().read_line(&mut input) {
     Ok(size_input) => {
-      if size_input == 0 {
+      if size_input < 2 {
         bail!("a size of the input equals to 0");
       }
 
