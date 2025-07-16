@@ -8,6 +8,13 @@ license = "MIT"
 name = "multiplication-karatsuba"
 path = "main.rs"
 
+[profile.dev]
+opt-level = 0
+debug = true
+debug-assertions = true
+overflow-checks = true
+lto = false
+
 [dependencies]
 num-bigint = "0.4.6"
 num-traits = "0.2.19"
