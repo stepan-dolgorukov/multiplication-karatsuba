@@ -72,7 +72,7 @@ fn read_biguint_from_stdin() -> Result<BigUint> {
       }
 
       BigUint::from_str(&mut input.trim())
-        .context("fail to represent input as value of the type biguint")
+        .context("fail to represent input as value of the type \"BigUint\"")
     }
 
     Err(_) => {
