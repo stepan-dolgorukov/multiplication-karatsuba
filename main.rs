@@ -14,6 +14,12 @@ struct Split {
   high: BigUint,
 }
 
+impl Split {
+  fn new(value: &BigUint, length: u32) -> Split {
+    calculate_split(value, length)
+  }
+}
+
 fn calculate_split(value: &BigUint, length: u32) -> Split {
   let divisor: BigUint = BigUint::from(10u8).pow(length);
   Split {
@@ -38,8 +44,8 @@ fn calculate_product(left: &BigUint, right: &BigUint) -> BigUint {
   }
 
   let n = max(length_left, length_right) / 2;
-  let split_left: Split = calculate_split(&left, n);
-  let split_right: Split = calculate_split(&right, n);
+  let split_left = Split::new(&left, n);
+  let split_right = Split::new(&right, n);
 
   // println!("{} {} {} {}", split_right.high, split_right.low, split_left.high, split_left.low);
   // a = u_1 * v_1
