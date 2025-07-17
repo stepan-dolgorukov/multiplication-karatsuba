@@ -2,6 +2,7 @@ use anyhow::{Context, Result, bail};
 use num_bigint::BigUint;
 use num_traits::Zero;
 use std::cmp::max;
+use std::ops::Mul;
 use std::str::FromStr;
 use std::time::{Duration, Instant};
 
@@ -21,6 +22,15 @@ impl Split {
       low: value % &divisor,
       high: value / &divisor,
     }
+  }
+}
+
+struct BigUintKaratsubaMultiplication(BigUint);
+
+impl Mul<&BigUint> for &BigUintKaratsubaMultiplication {
+  type Output = BigUintKaratsubaMultiplication;
+  fn mul(self, multiplier: &BigUint) -> Self::Output {
+    BigUintKaratsubaMultiplication(calculate_product(&self.0, &multiplier))
   }
 }
 
@@ -82,13 +92,13 @@ fn read_biguint_from_stdin() -> Result<BigUint> {
 }
 
 fn main() -> Result<()> {
-  let operand_left: BigUint = read_biguint_from_stdin()?;
+  let operand_left = BigUintKaratsubaMultiplication(read_biguint_from_stdin()?);
   let operand_right: BigUint = read_biguint_from_stdin()?;
   let instant: Instant = Instant::now();
-  let product: BigUint = calculate_product(&operand_left, &operand_right);
+  let product = &operand_left * &operand_right;
   let duration_calculation: Duration = instant.elapsed();
 
-  println!("{} * {} = {}", operand_left, operand_right, product);
+  println!("{} * {} = {}", operand_left.0, operand_right, product.0);
   println!("{} ns", duration_calculation.as_nanos());
   Ok(())
 }
