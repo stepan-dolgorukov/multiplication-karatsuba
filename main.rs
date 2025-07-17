@@ -26,6 +26,12 @@ impl Split {
 
 struct BigUintKaratsubaMultiplication(BigUint);
 
+impl BigUintKaratsubaMultiplication {
+  fn new(value: BigUint) -> Self {
+    BigUintKaratsubaMultiplication(value)
+  }
+}
+
 impl Mul<&BigUint> for &BigUintKaratsubaMultiplication {
   type Output = BigUintKaratsubaMultiplication;
   fn mul(self, multiplier: &BigUint) -> Self::Output {
@@ -86,7 +92,7 @@ fn read_biguint_from_stdin() -> Result<BigUint> {
 }
 
 fn main() -> Result<()> {
-  let operand_left = BigUintKaratsubaMultiplication(read_biguint_from_stdin()?);
+  let operand_left = BigUintKaratsubaMultiplication::new(read_biguint_from_stdin()?);
   let operand_right: BigUint = read_biguint_from_stdin()?;
   let instant: Instant = Instant::now();
   let product = &operand_left * &operand_right;
