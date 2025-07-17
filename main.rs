@@ -1,6 +1,5 @@
 use anyhow::{Context, Result, bail};
 use num_bigint::BigUint;
-use num_traits::Zero;
 use std::cmp::max;
 use std::ops::Mul;
 use std::str::FromStr;
@@ -36,11 +35,6 @@ impl Mul<&BigUint> for &BigUintKaratsubaMultiplication {
 
 fn calculate_product(left: &BigUint, right: &BigUint) -> BigUint {
   // println!("{} {}", left, right);
-
-  if left.is_zero() || right.is_zero() {
-    return BigUint::zero();
-  }
-
   let length_left: u32 = calculate_length(&left);
   let length_right: u32 = calculate_length(&right);
 
