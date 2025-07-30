@@ -35,7 +35,7 @@ impl BigUintKaratsubaMultiplication {
 impl Mul<&BigUint> for &BigUintKaratsubaMultiplication {
   type Output = BigUintKaratsubaMultiplication;
   fn mul(self, multiplier: &BigUint) -> Self::Output {
-    BigUintKaratsubaMultiplication(calculate_product(&self.0, &multiplier))
+    BigUintKaratsubaMultiplication(calculate_product(&self.0, multiplier))
   }
 }
 
