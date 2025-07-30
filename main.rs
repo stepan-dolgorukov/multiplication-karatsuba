@@ -16,7 +16,7 @@ struct Split {
 
 impl Split {
   fn new(value: &BigUint, length: u32) -> Split {
-    let divisor: BigUint = BigUint::from(10u8).pow(length);
+    let divisor = BigUint::from(10u8).pow(length);
     Split {
       low: value % &divisor,
       high: value / &divisor,
