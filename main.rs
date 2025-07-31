@@ -35,41 +35,51 @@ impl BigUintKaratsubaMultiplication {
 impl Mul<&BigUint> for &BigUintKaratsubaMultiplication {
   type Output = BigUintKaratsubaMultiplication;
   fn mul(self, multiplier: &BigUint) -> Self::Output {
-    BigUintKaratsubaMultiplication(calculate_product(&self.0, multiplier))
+    let length_left: u32 = calculate_length(&self.0);
+    let length_right: u32 = calculate_length(multiplier);
+
+    if (length_left <= 4) && (length_right <= 4) {
+      // здесь должно вызываться вычисление произведения столбиком
+      return BigUintKaratsubaMultiplication(&self.0 * multiplier);
+    }
+
+    let half_maximum_length = max(length_left, length_right) / 2;
+    let left_split = Split::new(&self.0, half_maximum_length);
+    let right_split = Split::new(multiplier, half_maximum_length);
+
+    /* left_split = (u_1, u_0)
+    right_split = (v_1, v_0) */
+
+    let multiplication_high_parts =
+      &BigUintKaratsubaMultiplication(left_split.high.clone()) * &right_split.high;
+    let multiplication_low_parts =
+      &BigUintKaratsubaMultiplication(left_split.low.clone()) * &right_split.low;
+
+    /* multiplication_high_parts = u_1 * v_1
+    multiplication_low_parts = u_0 * v_0 */
+
+    let multiplication_sums_low_high =
+      &BigUintKaratsubaMultiplication(&left_split.high + &left_split.low)
+        * &(&right_split.high + &right_split.low);
+
+    /* multiplication_sums_low_high = (u_1 + u_0) * (v_1 + v_0) */
+
+    let p = BigUint::from(10u8).pow(half_maximum_length);
+
+    BigUintKaratsubaMultiplication(
+      &multiplication_high_parts.0 * p.pow(2)
+        + (&BigUintKaratsubaMultiplication(
+          (multiplication_sums_low_high.0 - multiplication_high_parts.0)
+            - multiplication_low_parts.0.clone(),
+        ) * &p)
+          .0
+        + multiplication_low_parts.0,
+    )
+
+    /* product = multiplication_high_parts * (p**2) +
+    (multiplication_sums_low_high - multiplication_high_parts - multiplication_low_parts) * p +
+    multiplication_low_parts */
   }
-}
-
-fn calculate_product(left: &BigUint, right: &BigUint) -> BigUint {
-  // println!("{} {}", left, right);
-  let length_left: u32 = calculate_length(&left);
-  let length_right: u32 = calculate_length(&right);
-
-  if (length_left <= 4) && (length_right <= 4) {
-    // здесь должно вызываться вычисление произведения столбиком
-    return left * right;
-  }
-
-  let n = max(length_left, length_right) / 2;
-  let split_left = Split::new(&left, n);
-  let split_right = Split::new(&right, n);
-
-  // println!("{} {} {} {}", split_right.high, split_right.low, split_left.high, split_left.low);
-  // a = u_1 * v_1
-  let a: BigUint = calculate_product(&split_left.high, &split_right.high);
-
-  // b = u_0 * v_0
-  let b: BigUint = calculate_product(&split_left.low, &split_right.low);
-
-  // c = (u_1 + u_0) * (v_1 + v_0)
-  let c: BigUint = calculate_product(
-    &(&split_left.high + &split_left.low),
-    &(&split_right.high + &split_right.low),
-  );
-
-  // println!("a={}, b={}, c={}", a, b, c);
-
-  let p: BigUint = BigUint::from(10u8).pow(n);
-  &a * p.pow(2) + calculate_product(&((&c - &a) - &b), &p) + &b
 }
 
 fn read_biguint_from_stdin() -> Result<BigUint> {
